@@ -1,6 +1,6 @@
-import logo from '../logo.png';
+import logo from "../logo.png";
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function Register({ email, setEmail, username, setUsername, password, setPassword, registerCredentials }) {
 	const [showRegisterError, isShowRegisterError] = useState(false);
@@ -16,7 +16,7 @@ export default function Register({ email, setEmail, username, setUsername, passw
 
 		if (isValidEmail) {
 			if (isValidPassword) {
-				navigate('/');
+				navigate("/");
 			}
 			isShowRegisterError(true);
 		} else {
@@ -33,13 +33,13 @@ export default function Register({ email, setEmail, username, setUsername, passw
 					<h4 className="ls-tight text-light">
 						Organize your thoughts with
 						<div>
-							<img src={logo} alt="BEELINE logo" width="40" className="d-inline-block align-text-top" style={{ marginTop: '-11px', marginRight: '6px' }} />
-							<span className="app-name text-warning" style={{ fontSize: '50px' }}>BEELINE</span>
+							<img src={logo} alt="BEELINE logo" width="40" className="d-inline-block align-text-top" style={{ marginTop: "-11px", marginRight: "6px" }} />
+							<span className="app-name text-warning" style={{ fontSize: "50px" }}>BEELINE</span>
 						</div>
 					</h4>
 					<p>
 						<div className="my-4"><i>Buzzing with ideas?</i></div>
-						<div>Organize your thoughts with our app. Jot down notes, create cohesive diagrams <span className='text-secondary'>(coming soon!)</span>, and make a hive of trusted collaborators to brainstorm with.</div>
+						<div>Organize your thoughts with our app. Jot down notes, create cohesive diagrams <span className="text-secondary">(coming soon!)</span>, and make a hive of trusted collaborators to brainstorm with.</div>
 					</p>
 				</div>
 
@@ -55,17 +55,17 @@ export default function Register({ email, setEmail, username, setUsername, passw
 
 							<form>
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: '50px', fontSize: '24px' }} id="usernameLabel"><i class="fa fa-solid fa-user text-warning"></i></span>
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="usernameLabel"><i class="fa fa-solid fa-user text-warning"></i></span>
 									<input type="username" class="form-control" placeholder="Username" id="username" htmlFor="username" name="username" onChange={(e) => setUsername(e.target.value)} value={username} />
 								</div>
 
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: '50px', fontSize: '24px' }} id="emailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="emailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
 									<input type="email" class="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} />
 								</div>
 
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: '50px', fontSize: '24px' }} id="passwordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: '4px' }}></i></span>
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="passwordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
 									<input type="password" class="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} />
 								</div>
 

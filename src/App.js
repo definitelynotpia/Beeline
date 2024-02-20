@@ -1,14 +1,14 @@
-import './App.css';
-import logo from './logo.png';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Routes, Route, NavLink } from 'react-router-dom';
+import "./App.css";
+import logo from "./logo.png";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Routes, Route, NavLink } from "react-router-dom";
 
 // components
-import Login from './components/Login';
-import Register from './components/Register';
-import Profile from './components/Profile';
-import Dashboard from './components/Dashboard';
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Profile from "./components/Profile";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -17,9 +17,9 @@ function App() {
   const navigate = useNavigate();
 
   const accounts = [
-    { email: "harry.styles@school.edu.com", password: "asitwas" },
-    { email: "taylor.swift@school.edu.com", password: "cruelsummer1989" },
-    { email: "lana.delrey@school.edu.com", password: "summertimesadness" },
+    { username: "harrystyles", email: "harry.styles@school.edu.com", password: "asitwas" },
+    { username: "taylorswift", email: "taylor.swift@school.edu.com", password: "cruelsummer1989" },
+    { username: "honeymoon", email: "lana.delrey@school.edu.com", password: "summertimesadness" },
   ];
 
   const logout = () => {
@@ -66,7 +66,7 @@ function App() {
                 <NavLink className="nav-link" to="/register">Register</NavLink>
               </button></>}
 
-            {isProfile && <><button type="button" className="btn btn-outline-warning ms-5 me-3"><NavLink className="nav-link" to="/profile" ><i className="fa fa-user" style={{ fontSize: '21px' }}></i></NavLink></button>
+            {isProfile && <><button type="button" className="btn btn-outline-warning ms-5 me-3"><NavLink className="nav-link" to="/profile" ><i className="fa fa-user" style={{ fontSize: "21px" }}></i></NavLink></button>
               <button className="btn btn-warning" id="loginButton" type="button" onClick={logout}>Logout</button></>}
           </div>
         </div>
@@ -77,7 +77,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
 
-          <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} loginCredentials={accounts} />} />
+          <Route path="/login" element={<Login email={email} setEmail={setEmail} setUsername={setUsername} password={password} setPassword={setPassword} loginCredentials={accounts} />} />
 
           <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} registerCredentials={accounts} />} />
 

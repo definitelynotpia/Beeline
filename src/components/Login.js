@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-export default function Login({ email, setEmail, password, setPassword, loginCredentials }) {
+export default function Login({ email, setEmail, setUsername, password, setPassword, loginCredentials }) {
 	const [showLoginError, isShowLoginError] = useState(false);
 	const navigate = useNavigate();
 
@@ -15,7 +15,9 @@ export default function Login({ email, setEmail, password, setPassword, loginCre
 
 		if (isValidEmail) {
 			if (isValidPassword) {
-				navigate('/');
+				var username = loginCredentials[arrayIndex].username;
+				setUsername(username);
+				navigate("/");
 			}
 			isShowLoginError(true);
 		} else {
@@ -35,7 +37,7 @@ export default function Login({ email, setEmail, password, setPassword, loginCre
 					</h2>
 					<div>
 						<div className="mt-4 mb-3"><i>Loving our app?</i></div>
-						<div>Help <span className="app-name text-warning" style={{ fontSize: '32px' }}>BEELINE</span> grow and improve by inviting your friends to join, and sending feedback to our support department.</div>
+						<div>Help <span className="app-name text-warning" style={{ fontSize: "32px" }}>BEELINE</span> grow and improve by inviting your friends to join, and sending feedback to our support department.</div>
 					</div>
 				</div>
 
@@ -51,17 +53,17 @@ export default function Login({ email, setEmail, password, setPassword, loginCre
 
 							<form>
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: '50px', fontSize: '24px' }} id="emailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
-									<input type="email" class="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} style={{ fontSize: '20px' }} />
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="emailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
+									<input type="email" class="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} style={{ fontSize: "20px" }} />
 								</div>
 
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: '50px', fontSize: '24px' }} id="passwordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: '4px' }}></i></span>
-									<input type="password" class="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} style={{ fontSize: '20px' }} />
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="passwordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
+									<input type="password" class="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} style={{ fontSize: "20px" }} />
 								</div>
 
-								<div class="mb-4" style={{ fontSize: '18px' }}>
-									<span className="me-2" style={{ width: '50px' }} id="rememberMe">
+								<div class="mb-4" style={{ fontSize: "18px" }}>
+									<span className="me-2" style={{ width: "50px" }} id="rememberMe">
 										<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
 									</span>Remember me
 								</div>
