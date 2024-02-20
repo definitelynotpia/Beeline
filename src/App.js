@@ -81,7 +81,7 @@ function App() {
 
           <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} registerCredentials={accounts} />} />
 
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile username={username} email={email} />} />
         </Routes>
       </header>
     </div>

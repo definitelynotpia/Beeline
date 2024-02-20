@@ -33,10 +33,10 @@ export default function Login({ email, setEmail, password, setPassword, loginCre
 						Welcome back,<br />
 						<span className="fw-bold text-warning display-5">busy bee!</span>
 					</h2>
-					<p>
+					<div>
 						<div className="mt-4 mb-3"><i>Loving our app?</i></div>
 						<div>Help <span className="app-name text-warning" style={{ fontSize: '32px' }}>BEELINE</span> grow and improve by inviting your friends to join, and sending feedback to our support department.</div>
-					</p>
+					</div>
 				</div>
 
 				<div className="col-lg-4">
