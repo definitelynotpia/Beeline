@@ -1,28 +1,47 @@
 import logo from "../logo.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+// firebase
+import { db } from "../firebase/Firebase";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
-export default function Register({ email, setEmail, username, setUsername, password, setPassword, registerCredentials }) {
+export default function Register({ newEmail, setNewEmail, newUsername, setNewUsername, newPassword, setNewPassword }) {
 	const [showRegisterError, isShowRegisterError] = useState(false);
+	const usersCollectionRef = collection(db, "Users");
 	const navigate = useNavigate();
 
-	const validateRegister = () => {
-		// get register credentials
-		const arrayIndex = registerCredentials.findIndex((obj) => email === obj.email);
-		var isValidEmail = registerCredentials[arrayIndex].email === email;
-		var isValidPassword = registerCredentials[arrayIndex].password === password;
-		console.log(isValidEmail);
-		console.log(isValidPassword);
-
-		if (isValidEmail) {
-			if (isValidPassword) {
-				navigate("/");
+	const createUser = async () => {
+		await addDoc(usersCollectionRef,
+			{
+				bio: "",
+				email: newEmail,
+				gender: "",
+				password: newPassword,
+				newUsername: newUsername,
 			}
-			isShowRegisterError(true);
-		} else {
-			isShowRegisterError(true);
-		}
+		);
+
+		navigate("/");
 	};
+
+
+	// const validateRegister = () => {
+	// 	// get register credentials
+	// 	const arrayIndex = registerCredentials.findIndex((obj) => newEmail === obj.newEmail);
+	// 	var isValidEmail = registerCredentials[arrayIndex].newEmail === newEmail;
+	// 	var isValidPassword = registerCredentials[arrayIndex].newPassword === newPassword;
+	// 	console.log(isValidEmail);
+	// 	console.log(isValidPassword);
+
+	// 	if (isValidEmail) {
+	// 		if (isValidPassword) {
+	// 			navigate("/");
+	// 		}
+	// 		isShowRegisterError(true);
+	// 	} else {
+	// 		isShowRegisterError(true);
+	// 	}
+	// };
 
 	return <>
 		{/* Template: https://mdbootstrap.com/docs/standard/extended/register/#section-8 */}
@@ -49,27 +68,27 @@ export default function Register({ email, setEmail, username, setUsername, passw
 							<h4 className="pt-3 pb-4 ls-tight fw-bold text-warning">Register your account.</h4>
 
 							{showRegisterError && <div className="alert alert-warning align-items-center">
-								<div>This email already has an account.</div>
+								<div>This newEmail already has an account.</div>
 								<div>Do you want to register?</div>
 							</div>}
 
 							<form>
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="usernameLabel"><i class="fa fa-solid fa-user text-warning"></i></span>
-									<input type="username" class="form-control" placeholder="Username" id="username" htmlFor="username" name="username" onChange={(e) => setUsername(e.target.value)} value={username} />
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="newUsernameLabel"><i class="fa fa-solid fa-user text-warning"></i></span>
+									<input type="text" class="form-control" placeholder="Username" id="newUsername" htmlFor="newUsername" name="newUsername" onChange={(e) => setNewUsername(e.target.value)} value={newUsername} />
 								</div>
 
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="emailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
-									<input type="email" class="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} />
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="newEmailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
+									<input type="email" class="form-control" placeholder="Email" id="newEmail" htmlFor="newEmail" name="newEmail" onChange={(e) => setNewEmail(e.target.value)} value={newEmail} />
 								</div>
 
 								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="passwordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
-									<input type="password" class="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} />
+									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="newPasswordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
+									<input type="password" class="form-control" placeholder="Password" id="newPassword" htmlFor="newPassword" name="newPassword" onChange={(e) => setNewPassword(e.target.value)} value={newPassword} />
 								</div>
 
-								<button type="button" className="btn btn-warning btn-block mb-4" onClick={validateRegister}>
+								<button type="button" className="btn btn-warning btn-block mb-4" onClick={createUser}>
 									REGISTER
 								</button>
 							</form>
