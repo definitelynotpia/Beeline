@@ -1,20 +1,27 @@
-import "./App.css";
-import logo from "./logo.png";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Routes, Route, NavLink } from "react-router-dom";
-
 // components
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Dashboard from "./components/Dashboard";
+// react
+import "./App.css";
+import logo from "./logo.png";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Routes, Route, NavLink } from "react-router-dom";
+// firebase
+import { db } from "./firebase/Firebase";
+import { collection, getDocs } from "firebase/firestore";
+
 
 function App() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  console.log(process.env);
+  console.log(process.env.REACT_APP_BEELINE_API_KEY);
 
   const accounts = [
     { username: "harrystyles", email: "harry.styles@school.edu.com", password: "asitwas" },
