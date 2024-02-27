@@ -1,20 +1,55 @@
-import "./App.css";
-import logo from "./logo.png";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Routes, Route, NavLink } from "react-router-dom";
-
 // components
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Dashboard from "./components/Dashboard";
+// react
+import "./App.css";
+import logo from "./logo.png";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Routes, Route, NavLink } from "react-router-dom";
+// firebase
+import { db } from "./firebase/Firebase";
+import { collection, getDocs, addDoc } from "firebase/firestore";
+
 
 function App() {
+  // login
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  // register
+  const [newEmail, setNewEmail] = useState("");
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
+
+  const [users, setUsers] = useState([]);
+  const usersCollectionRef = collection(db, "Users");
+
+  const createUser = async () => {
+    await addDoc(usersCollectionRef,
+      {
+        bio: "",
+        email: newEmail,
+        gender: "",
+        password: newPassword,
+        username: newUsername,
+      }
+    );
+  };
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(
+        data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+    };
+
+    getUsers();
+  }, []);
 
   const accounts = [
     { username: "harrystyles", email: "harry.styles@school.edu.com", password: "asitwas" },
@@ -40,9 +75,23 @@ function App() {
   }
 
   return (
+    // <>
+    //   <div className="App">
+    //     {users.map((User) => {
+    //       return <div>
+    //         <hr/>
+    //         <div><hi>Username: {User.username}</hi></div>
+    //         <div><hi>Email: {User.email}</hi></div>
+    //         <div><hi>Gender: {User.gender}</hi></div>
+    //         <div><hi>Pronouns: {User.pronouns}</hi></div>
+    //         <div><hi>Bio: {User.bio}</hi></div>
+    //       </div>
+    //     })}
+    //   </div>
+    // </>
     <div className="App">
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+      <nav className="navbar navbar-expand-lg fixed-top bg-dark border-bottom border-body" data-bs-theme="dark">
         <div className="container-fluid">
 
           <img src={logo} alt="BEELINE logo" width="50" className="d-inline-block align-text-top app-icon" />
@@ -79,7 +128,7 @@ function App() {
 
           <Route path="/login" element={<Login email={email} setEmail={setEmail} setUsername={setUsername} password={password} setPassword={setPassword} loginCredentials={accounts} />} />
 
-          <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} registerCredentials={accounts} />} />
+          <Route path="/register" element={<Register newEmail={newEmail} setNewEmail={setNewEmail} newUsername={newUsername} setNewUsername={setNewUsername} newPassword={newPassword} setNewPassword={setNewPassword} />} />
 
           <Route path="/profile" element={<Profile username={username} email={email} />} />
         </Routes>
