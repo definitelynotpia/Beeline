@@ -10,85 +10,43 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route, NavLink } from "react-router-dom";
 // firebase
-import { db } from "./firebase/Firebase";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { db, auth } from "./firebase/Firebase";
+import { collection, getDocs, query, where, onSnapshot } from "firebase/firestore";
+import { signOut } from "firebase/auth";
 
 
 function App() {
-  // login
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // register
-  const [newEmail, setNewEmail] = useState("");
-  const [newUsername, setNewUsername] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const navigate = useNavigate();
-
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
+  // if not logged in, currentUser will be null
+  const user = auth.currentUser;
   const usersCollectionRef = collection(db, "Users");
-
-  const createUser = async () => {
-    await addDoc(usersCollectionRef,
-      {
-        bio: "",
-        email: newEmail,
-        gender: "",
-        password: newPassword,
-        username: newUsername,
-      }
-    );
-  };
 
   useEffect(() => {
     const getUsers = async () => {
       const data = await getDocs(usersCollectionRef);
-      setUsers(
-        data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-      );
+      // store data from Users collection into users
+      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
-
     getUsers();
   }, []);
 
-  const accounts = [
-    { username: "harrystyles", email: "harry.styles@school.edu.com", password: "asitwas" },
-    { username: "taylorswift", email: "taylor.swift@school.edu.com", password: "cruelsummer1989" },
-    { username: "honeymoon", email: "lana.delrey@school.edu.com", password: "summertimesadness" },
-  ];
-
-  const logout = () => {
-    setEmail("");
-    navigate("/login");
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setEmail("");
+      setPassword("");
+      setUsername("");
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  let isLogin, isProfile = false;
-
-  // if user not logged in, render login button
-  if (email == "") {
-    isProfile = false;
-    isLogin = true;
-  } else {
-    // if user logged in, render profile button
-    isLogin = false;
-    isProfile = true;
-  }
-
   return (
-    // <>
-    //   <div className="App">
-    //     {users.map((User) => {
-    //       return <div>
-    //         <hr/>
-    //         <div><hi>Username: {User.username}</hi></div>
-    //         <div><hi>Email: {User.email}</hi></div>
-    //         <div><hi>Gender: {User.gender}</hi></div>
-    //         <div><hi>Pronouns: {User.pronouns}</hi></div>
-    //         <div><hi>Bio: {User.bio}</hi></div>
-    //       </div>
-    //     })}
-    //   </div>
-    // </>
     <div className="App">
       {/* Navbar */}
       <nav className="navbar navbar-expand-lg fixed-top bg-dark border-bottom border-body" data-bs-theme="dark">
@@ -108,29 +66,30 @@ function App() {
               </li>
             </ul>
 
-            {isLogin && <><button className="btn btn-outline-warning ms-5 me-3" id="loginButton" type="button">
-              <NavLink className="nav-link" to="/login">Login</NavLink>
-            </button>
-              <button className="btn btn-warning" id="registerButton" type="button">
-                <NavLink className="nav-link" to="/register">Register</NavLink>
-              </button></>}
+            { // if user is not logged in
+              !user && <><button className="btn btn-outline-warning ms-5 me-3" id="loginButton" type="button">
+                <NavLink className="nav-link" to="/login">Login</NavLink>
+              </button>
+                <button className="btn btn-warning" id="registerButton" type="button">
+                  <NavLink className="nav-link" to="/register">Register</NavLink>
+                </button></>}
 
-            {isProfile && <><button type="button" className="btn btn-outline-warning ms-5 me-3"><NavLink className="nav-link" to="/profile" ><i className="fa fa-user" style={{ fontSize: "21px" }}></i></NavLink></button>
-              <button className="btn btn-warning" id="loginButton" type="button" onClick={logout}>Logout</button></>}
+            { // if user is logged in
+              user && <><button type="button" className="btn btn-outline-warning ms-5 me-3"><NavLink className="nav-link" to="/profile" ><i className="fa fa-user" style={{ fontSize: "21px" }}></i></NavLink></button>
+                <button className="btn btn-warning" id="loginButton" type="button" onClick={logout}>Logout</button></>}
           </div>
         </div>
       </nav>
 
-      {/* Webpage content */}
       <header className="App-header">
         <Routes>
           <Route path="/" element={<Dashboard />} />
 
-          <Route path="/login" element={<Login email={email} setEmail={setEmail} setUsername={setUsername} password={password} setPassword={setPassword} loginCredentials={accounts} />} />
+          <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
 
-          <Route path="/register" element={<Register newEmail={newEmail} setNewEmail={setNewEmail} newUsername={newUsername} setNewUsername={setNewUsername} newPassword={newPassword} setNewPassword={setNewPassword} />} />
+          <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
 
-          <Route path="/profile" element={<Profile username={username} email={email} />} />
+          <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} />} />
         </Routes>
       </header>
     </div>

@@ -1,29 +1,57 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+// firebase
+import { auth } from "../firebase/Firebase"
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
-export default function Login({ email, setEmail, setUsername, password, setPassword, loginCredentials }) {
+
+export default function Login({ email, setEmail, password, setPassword }) {
 	const [showLoginError, isShowLoginError] = useState(false);
 	const navigate = useNavigate();
+	const googleProvider = new GoogleAuthProvider();
 
-	const validateLogin = () => {
-		// get login credentials
-		const arrayIndex = loginCredentials.findIndex((obj) => email === obj.email);
-		var isValidEmail = loginCredentials[arrayIndex].email === email;
-		var isValidPassword = loginCredentials[arrayIndex].password === password;
-		console.log(isValidEmail);
-		console.log(isValidPassword);
-
-		if (isValidEmail) {
-			if (isValidPassword) {
-				var username = loginCredentials[arrayIndex].username;
-				setUsername(username);
-				navigate("/");
-			}
+	const signIn = async () => {
+		try {
+			await signInWithEmailAndPassword(auth, email, password);
+			console.log("normal signin:", auth.currentUser.email);
+			navigate("/");
+		} catch (err) {
 			isShowLoginError(true);
-		} else {
-			isShowLoginError(true);
+			console.error(err);
 		}
 	};
+
+	// sign in with google
+	const signInWithGoogle = async () => {
+		try {
+			await signInWithPopup(auth, googleProvider);
+			console.log("google signin:", auth?.currentUser?.email);
+			navigate("/");
+		} catch (err) {
+			showLoginError(true);
+			console.error(err)
+		}
+	};
+
+	// const validateLogin = () => {
+	// 	// get login credentials
+	// 	const arrayIndex = loginCredentials.findIndex((obj) => email === obj.email);
+	// 	var isValidEmail = loginCredentials[arrayIndex].email === email;
+	// 	var isValidPassword = loginCredentials[arrayIndex].password === password;
+	// 	console.log(isValidEmail);
+	// 	console.log(isValidPassword);
+
+	// 	if (isValidEmail) {
+	// 		if (isValidPassword) {
+	// 			var username = loginCredentials[arrayIndex].username;
+	// 			setUsername(username);
+	// 			navigate("/");
+	// 		}
+	// 		isShowLoginError(true);
+	// 	} else {
+	// 		isShowLoginError(true);
+	// 	}
+	// };
 
 	return <>
 		{/* Template: https://mdbootstrap.com/docs/standard/extended/login/#section-8 */}
@@ -52,25 +80,35 @@ export default function Login({ email, setEmail, setUsername, password, setPassw
 							</div>}
 
 							<form>
-								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="emailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
-									<input type="email" class="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} style={{ fontSize: "20px" }} />
+								<div className="input-group">
+									<span className="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="emailLabel"><i className="fa fa-solid fa-envelope text-warning"></i></span>
+									<input type="email" className="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} style={{ fontSize: "20px" }} />
 								</div>
 
-								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="passwordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
-									<input type="password" class="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} style={{ fontSize: "20px" }} />
+								<div className="input-group">
+									<span className="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="passwordLabel"><i className="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
+									<input type="password" className="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} style={{ fontSize: "20px" }} />
 								</div>
 
-								<div class="mb-4" style={{ fontSize: "18px" }}>
+								<div className="mb-4" style={{ fontSize: "18px" }}>
 									<span className="me-2" style={{ width: "50px" }} id="rememberMe">
-										<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+										<input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
 									</span>Remember me
 								</div>
 
-								<button type="button" className="btn btn-warning btn-block" onClick={validateLogin}>
+								<button type="button" className="btn btn-warning btn-block fw-bold" onClick={signIn}>
 									LOGIN
 								</button>
+
+								<hr className="my-4" />
+
+								<p className="pb-2 ls-tight text-warning" style={{ fontSize: "18px" }}>Or login with connected apps:</p>
+
+								<div className="d-flex flex-row justify-content-center align-items-center">
+									<button type="button" className="btn btn-warning btn-block" onClick={signInWithGoogle}>
+										<i className="fa fa-google"></i>
+									</button>
+								</div>
 							</form>
 						</div>
 					</div>

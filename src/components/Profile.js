@@ -1,9 +1,32 @@
 import logo from "../logo.png";
+import { db, auth } from "../firebase/Firebase";
+import { doc, getDoc } from "firebase/firestore";
 
-export default function Profile({ username, email }) {
+export default function Profile({ usersCollectionRef }) {
+
+	const docRef = doc(db, "Users", auth.currentUser.uid);
+	const docSnap = getDoc(docRef);
+	if (docSnap.exists()) {
+		console.log("Document data:", docSnap.data());
+	} else {
+		// docSnap.data() will be undefined in this case
+		console.log("No such document!");
+	}
 
 
 	return <>
+
+		{/* {users.map((User) => {
+			return <div>
+				<hr />
+				<div><hi>Username: {User.username}</hi></div>
+				<div><hi>Email: {User.email}</hi></div>
+				<div><hi>Gender: {User.gender}</hi></div>
+				<div><hi>Pronouns: {User.pronouns}</hi></div>
+				<div><hi>Bio: {User.bio}</hi></div>
+			</div>
+		})} */}
+
 		<div className="container py-5">
 			<div className="row">
 
@@ -13,8 +36,8 @@ export default function Profile({ username, email }) {
 						<div className="justify-content-center align-items-center mt-5">
 							<img src={logo} alt="Avatar" className="img-fluid img-thumbnail mb-3" width='150px' />
 							<div className="text-white">
-								<h3 className="text-warning fw-bold">{username}</h3>
-								<h5 className="text-light fw-normal opacity-75"><i>{email}</i></h5>
+								<h3 className="text-warning fw-bold">username</h3>
+								<h5 className="text-light fw-normal opacity-75"><i>email</i></h5>
 							</div>
 						</div>
 						<hr className="my-4 text-warning" />
@@ -47,7 +70,7 @@ export default function Profile({ username, email }) {
 									{/* Title, Author */}
 									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
 									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> {username}</strong> on (timestamp)</p>
+										<strong> username</strong> on (timestamp)</p>
 									<hr className="my-3" />
 									{/* Content */}
 									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
@@ -84,7 +107,7 @@ export default function Profile({ username, email }) {
 									{/* Title, Author */}
 									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
 									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> {username}</strong> on (timestamp)</p>
+										<strong> username</strong> on (timestamp)</p>
 									<hr className="my-3" />
 									{/* Content */}
 									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
@@ -109,7 +132,7 @@ export default function Profile({ username, email }) {
 									{/* Title, Author */}
 									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
 									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> {username}</strong> on (timestamp)</p>
+										<strong> username</strong> on (timestamp)</p>
 									<hr className="my-3" />
 									{/* Content */}
 									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
@@ -134,7 +157,7 @@ export default function Profile({ username, email }) {
 									{/* Title, Author */}
 									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
 									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> {username}</strong> on (timestamp)</p>
+										<strong> username</strong> on (timestamp)</p>
 									<hr className="my-3" />
 									{/* Content */}
 									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
@@ -159,7 +182,7 @@ export default function Profile({ username, email }) {
 									{/* Title, Author */}
 									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
 									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> {username}</strong> on (timestamp)</p>
+										<strong> username</strong> on (timestamp)</p>
 									<hr className="my-3" />
 									{/* Content */}
 									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
@@ -201,8 +224,8 @@ export default function Profile({ username, email }) {
 	// 						<div className="col-md-4 bg-dark text-center text-white"
 	// 							>
 	// 							<img src={logo} alt="Avatar" className="img-fluid border border-warning my-5 px-2 py-2" width="80px" />
-	// 							<h5>{username}</h5>
-	// 							<p>{email}</p>
+	// 							<h5>username</h5>
+	// 							<p>email</p>
 	// 							<i className="fa fa-edit mb-5"></i>
 	// 						</div>
 	// 						<div className="col-md-8">

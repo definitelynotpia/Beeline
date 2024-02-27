@@ -2,46 +2,33 @@ import logo from "../logo.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // firebase
-import { db } from "../firebase/Firebase";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { auth, db } from "../firebase/Firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+// import { collection } from "firebase/firestore";
 
-export default function Register({ newEmail, setNewEmail, newUsername, setNewUsername, newPassword, setNewPassword }) {
+export default function Register({ email, setEmail, username, setUsername, password, setPassword, usersCollectionRef }) {
 	const [showRegisterError, isShowRegisterError] = useState(false);
-	const usersCollectionRef = collection(db, "Users");
 	const navigate = useNavigate();
 
 	const createUser = async () => {
-		await addDoc(usersCollectionRef,
-			{
+		try {
+			// create new Firebase User
+			await createUserWithEmailAndPassword(auth, email, password);
+			// store user
+			await setDoc(doc(usersCollectionRef, auth.currentUser.uid), {
 				bio: "",
-				email: newEmail,
+				email: email,
 				gender: "",
-				password: newPassword,
-				newUsername: newUsername,
-			}
-		);
-
-		navigate("/");
+				username: username,
+			});
+			console.log("register:", auth?.currentUser?.email);
+			navigate("/");
+		} catch (err) {
+			isShowRegisterError(true);
+			console.error(err);
+		}
 	};
-
-
-	// const validateRegister = () => {
-	// 	// get register credentials
-	// 	const arrayIndex = registerCredentials.findIndex((obj) => newEmail === obj.newEmail);
-	// 	var isValidEmail = registerCredentials[arrayIndex].newEmail === newEmail;
-	// 	var isValidPassword = registerCredentials[arrayIndex].newPassword === newPassword;
-	// 	console.log(isValidEmail);
-	// 	console.log(isValidPassword);
-
-	// 	if (isValidEmail) {
-	// 		if (isValidPassword) {
-	// 			navigate("/");
-	// 		}
-	// 		isShowRegisterError(true);
-	// 	} else {
-	// 		isShowRegisterError(true);
-	// 	}
-	// };
 
 	return <>
 		{/* Template: https://mdbootstrap.com/docs/standard/extended/register/#section-8 */}
@@ -56,10 +43,10 @@ export default function Register({ newEmail, setNewEmail, newUsername, setNewUse
 							<span className="app-name text-warning" style={{ fontSize: "50px" }}>BEELINE</span>
 						</div>
 					</h4>
-					<p>
+					<div>
 						<div className="my-4"><i>Buzzing with ideas?</i></div>
 						<div>Organize your thoughts with our app. Jot down notes, create cohesive diagrams <span className="text-secondary">(coming soon!)</span>, and make a hive of trusted collaborators to brainstorm with.</div>
-					</p>
+					</div>
 				</div>
 
 				<div className="col-lg-4">
@@ -68,24 +55,24 @@ export default function Register({ newEmail, setNewEmail, newUsername, setNewUse
 							<h4 className="pt-3 pb-4 ls-tight fw-bold text-warning">Register your account.</h4>
 
 							{showRegisterError && <div className="alert alert-warning align-items-center">
-								<div>This newEmail already has an account.</div>
+								<div>This email already has an account.</div>
 								<div>Do you want to register?</div>
 							</div>}
 
 							<form>
-								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="newUsernameLabel"><i class="fa fa-solid fa-user text-warning"></i></span>
-									<input type="text" class="form-control" placeholder="Username" id="newUsername" htmlFor="newUsername" name="newUsername" onChange={(e) => setNewUsername(e.target.value)} value={newUsername} />
+								<div className="input-group">
+									<span className="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="usernameLabel"><i className="fa fa-solid fa-user text-warning" style={{ marginLeft: "6px" }}></i></span>
+									<input type="text" className="form-control" placeholder="Username" id="username" htmlFor="username" name="username" onChange={(e) => setUsername(e.target.value)} value={username} />
 								</div>
 
-								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="newEmailLabel"><i class="fa fa-solid fa-envelope text-warning"></i></span>
-									<input type="email" class="form-control" placeholder="Email" id="newEmail" htmlFor="newEmail" name="newEmail" onChange={(e) => setNewEmail(e.target.value)} value={newEmail} />
+								<div className="input-group">
+									<span className="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="newEmailLabel"><i className="fa fa-solid fa-envelope text-warning"></i></span>
+									<input type="email" className="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} />
 								</div>
 
-								<div class="input-group">
-									<span class="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="newPasswordLabel"><i class="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
-									<input type="password" class="form-control" placeholder="Password" id="newPassword" htmlFor="newPassword" name="newPassword" onChange={(e) => setNewPassword(e.target.value)} value={newPassword} />
+								<div className="input-group">
+									<span className="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="passwordLabel"><i className="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
+									<input type="password" className="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} />
 								</div>
 
 								<button type="button" className="btn btn-warning btn-block mb-4" onClick={createUser}>
