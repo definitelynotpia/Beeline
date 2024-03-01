@@ -87,7 +87,7 @@ function App() {
 
           <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
 
-          <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
+          <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} users={users} setUsers={setUsers} />} />
 
           <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} />} />
         </Routes>

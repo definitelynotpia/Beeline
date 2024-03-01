@@ -82,12 +82,12 @@ export default function Login({ email, setEmail, password, setPassword }) {
 							<form>
 								<div className="input-group">
 									<span className="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="emailLabel"><i className="fa fa-solid fa-envelope text-warning"></i></span>
-									<input type="email" className="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} style={{ fontSize: "20px" }} />
+									<input type="email" className="form-control" placeholder="Email" id="email" htmlFor="email" name="email" onChange={(e) => setEmail(e.target.value)} value={email} style={{ fontSize: "20px" }} required />
 								</div>
 
 								<div className="input-group">
 									<span className="input-group-text bg-dark" style={{ width: "50px", fontSize: "24px" }} id="passwordLabel"><i className="fa fa-solid fa-lock text-warning" style={{ marginLeft: "4px" }}></i></span>
-									<input type="password" className="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} style={{ fontSize: "20px" }} />
+									<input type="password" className="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} style={{ fontSize: "20px" }} required />
 								</div>
 
 								<div className="mb-4" style={{ fontSize: "18px" }}>
