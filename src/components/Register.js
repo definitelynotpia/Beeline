@@ -5,10 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/Firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
-// import { collection } from "firebase/firestore";
 
-export default function Register({ email, setEmail, username, setUsername, password, setPassword, usersCollectionRef, users, setUsers }) {
-	// initializeApp();
+export default function Register({ email, setEmail, username, setUsername, password, setPassword, usersCollectionRef }) {
 
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [userExists, isUserExists] = useState(false);

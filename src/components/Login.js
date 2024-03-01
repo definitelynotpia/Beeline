@@ -14,7 +14,7 @@ export default function Login({ email, setEmail, password, setPassword }) {
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
 			console.log("normal signin:", auth.currentUser.email);
-			navigate("/");
+			navigate("/profile");
 		} catch (err) {
 			isShowLoginError(true);
 			console.error(err);

@@ -1,31 +1,31 @@
 import logo from "../logo.png";
+// react
+import { useEffect } from "react";
+// firebase
 import { db, auth } from "../firebase/Firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { async } from "@firebase/util";
 
-export default function Profile({ usersCollectionRef }) {
+export default function Profile({ usersCollectionRef, userData, setUserData }) {
 
-	const docRef = doc(db, "Users", auth.currentUser.uid);
-	const docSnap = getDoc(docRef);
-	if (docSnap.exists()) {
-		console.log("Document data:", docSnap.data());
-	} else {
-		// docSnap.data() will be undefined in this case
-		console.log("No such document!");
-	}
+	useEffect(() => {
+		const fetchDocById = async () => {
+			// Create DocumentReference
+			const docRef = doc(db, "Users", auth.currentUser.uid) // db = getFirestore()
+			// Fetch document
+			getDoc(docRef)
+				.then(docSnap => {
+					if (docSnap.exists()) {
+						setUserData(docSnap.data());
+					}
+				});
+		};
+		fetchDocById();
+	}, [auth.currentUser.uid]);
 
+	console.log();
 
 	return <>
-
-		{/* {users.map((User) => {
-			return <div>
-				<hr />
-				<div><hi>Username: {User.username}</hi></div>
-				<div><hi>Email: {User.email}</hi></div>
-				<div><hi>Gender: {User.gender}</hi></div>
-				<div><hi>Pronouns: {User.pronouns}</hi></div>
-				<div><hi>Bio: {User.bio}</hi></div>
-			</div>
-		})} */}
 
 		<div className="container py-5">
 			<div className="row">
@@ -36,8 +36,8 @@ export default function Profile({ usersCollectionRef }) {
 						<div className="justify-content-center align-items-center mt-5">
 							<img src={logo} alt="Avatar" className="img-fluid img-thumbnail mb-3" width='150px' />
 							<div className="text-white">
-								<h3 className="text-warning fw-bold">username</h3>
-								<h5 className="text-light fw-normal opacity-75"><i>email</i></h5>
+								<h3 className="text-warning fw-bold">{userData.username}</h3>
+								<h5 className="text-light fw-normal opacity-75"><i>{userData.email}</i></h5>
 							</div>
 						</div>
 						<hr className="my-4 text-warning" />
@@ -57,7 +57,7 @@ export default function Profile({ usersCollectionRef }) {
 						{/* Bio */}
 						<div className="px-4">
 							<p className="text-start fw-bold fst-italic mb-2" style={{ fontSize: "20px" }}>Bio</p>
-							<p className="text-start text-justify opacity-75" style={{ fontSize: "18px" }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam quam velit, pellentesque quis ornare at, semper sit amet turpis. Nam consequat erat et sollicitudin convallis.</p>
+							<p className="text-start text-justify opacity-75" style={{ fontSize: "18px" }}>{userData.bio}</p>
 						</div>
 						<hr className="my-4 text-warning" />
 						{/* Pinned */}
@@ -73,7 +73,7 @@ export default function Profile({ usersCollectionRef }) {
 										<strong> username</strong> on (timestamp)</p>
 									<hr className="my-3" />
 									{/* Content */}
-									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
+									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem.</p>
 									<hr className="my-3" />
 									{/* Collaborators */}
 									<div className="d-flex justify-content-end align-items-end me-2">
@@ -110,82 +110,7 @@ export default function Profile({ usersCollectionRef }) {
 										<strong> username</strong> on (timestamp)</p>
 									<hr className="my-3" />
 									{/* Content */}
-									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
-									<hr className="my-3" />
-									{/* Collaborators */}
-									<div className="d-flex justify-content-end align-items-end me-2">
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-user-plus"></i>
-										</button>
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-share"></i>
-										</button>
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-pencil"></i>
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<div className="card my-4" style={{ borderRadius: "15px" }}>
-								<div className="card-body p-3">
-									{/* Title, Author */}
-									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
-									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> username</strong> on (timestamp)</p>
-									<hr className="my-3" />
-									{/* Content */}
-									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
-									<hr className="my-3" />
-									{/* Collaborators */}
-									<div className="d-flex justify-content-end align-items-end me-2">
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-user-plus"></i>
-										</button>
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-share"></i>
-										</button>
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-pencil"></i>
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<div className="card my-4" style={{ borderRadius: "15px" }}>
-								<div className="card-body p-3">
-									{/* Title, Author */}
-									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
-									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> username</strong> on (timestamp)</p>
-									<hr className="my-3" />
-									{/* Content */}
-									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
-									<hr className="my-3" />
-									{/* Collaborators */}
-									<div className="d-flex justify-content-end align-items-end me-2">
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-user-plus"></i>
-										</button>
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-share"></i>
-										</button>
-										<button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-											<i className="fa fa-pencil"></i>
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<div className="card my-4" style={{ borderRadius: "15px" }}>
-								<div className="card-body p-3">
-									{/* Title, Author */}
-									<p className="text-start fw-bold" style={{ marginBottom: "3px", fontSize: "20px" }}>Title</p>
-									<p className="text-start" style={{ fontSize: "18px" }}><i className="fa fa-star fa-lg text-warning"></i> <span className="mx-1">|</span> Created by
-										<strong> username</strong> on (timestamp)</p>
-									<hr className="my-3" />
-									{/* Content */}
-									<p className="text-start" style={{ fontSize: "18px" }}>Sed massa felis, euismod eget bibendum eget, auctor et lorem. Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum. Sed pellentesque nisl in placerat auctor. Sed tempus porttitor lacus sit amet volutpat.</p>
+									<p className="text-start" style={{ fontSize: "18px" }}>Nullam pellentesque pellentesque tellus, et convallis tortor. Curabitur iaculis risus id ullamcorper mattis. Donec convallis diam sed ex hendrerit, nec hendrerit erat bibendum.</p>
 									<hr className="my-3" />
 									{/* Collaborators */}
 									<div className="d-flex justify-content-end align-items-end me-2">
@@ -224,8 +149,8 @@ export default function Profile({ usersCollectionRef }) {
 	// 						<div className="col-md-4 bg-dark text-center text-white"
 	// 							>
 	// 							<img src={logo} alt="Avatar" className="img-fluid border border-warning my-5 px-2 py-2" width="80px" />
-	// 							<h5>username</h5>
-	// 							<p>email</p>
+	// 							<h5>{userData.username}</h5>
+	// 							<p>{userData.email}</p>
 	// 							<i className="fa fa-edit mb-5"></i>
 	// 						</div>
 	// 						<div className="col-md-8">

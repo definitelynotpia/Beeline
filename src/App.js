@@ -19,20 +19,20 @@ function App() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [users, setUsers] = useState([]);
+  const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
-  // if not logged in, currentUser will be null
-  const user = auth.currentUser;
+  // if not logged in, userData will be null
+  const user = auth.userData;
   const usersCollectionRef = collection(db, "Users");
 
-  useEffect(() => {
-    const getUsers = async () => {
-      const data = await getDocs(usersCollectionRef);
-      // store data from Users collection into users
-      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-    getUsers();
-  }, []);
+  // useEffect(() => {
+  //   const getUsers = async () => {
+  //     const data = await getDocs(usersCollectionRef);
+  //     // store data from Users collection into users
+  //     setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //   };
+  //   getUsers();
+  // }, []);
 
   const logout = async () => {
     try {
@@ -87,9 +87,9 @@ function App() {
 
           <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
 
-          <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} users={users} setUsers={setUsers} />} />
+          <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
 
-          <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} />} />
+          <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} userData={userData} setUserData={setUserData} />} />
         </Routes>
       </header>
     </div>
