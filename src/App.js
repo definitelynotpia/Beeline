@@ -22,7 +22,7 @@ function App() {
   const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
   // if not logged in, userData will be null
-  const user = auth.userData;
+  const user = auth.currentUser;
   const usersCollectionRef = collection(db, "Users");
 
   // useEffect(() => {
@@ -59,24 +59,24 @@ function App() {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+          <div className="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
+            {/* <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <NavLink className="nav-link active" to="/">Dashboard</NavLink>
               </li>
-            </ul>
+            </ul> */}
 
             { // if user is not logged in
               !user && <><button className="btn btn-outline-warning ms-5 me-3" id="loginButton" type="button">
                 <NavLink className="nav-link" to="/login">Login</NavLink>
               </button>
-                <button className="btn btn-warning" id="registerButton" type="button">
+                <button className="btn btn-warning me-2" id="registerButton" type="button">
                   <NavLink className="nav-link" to="/register">Register</NavLink>
                 </button></>}
 
             { // if user is logged in
               user && <><button type="button" className="btn btn-outline-warning ms-5 me-3"><NavLink className="nav-link" to="/profile" ><i className="fa fa-user" style={{ fontSize: "21px" }}></i></NavLink></button>
-                <button className="btn btn-warning" id="loginButton" type="button" onClick={logout}>Logout</button></>}
+                <button className="btn btn-warning me-2" id="loginButton" type="button" onClick={logout}>Logout</button></>}
           </div>
         </div>
       </nav>

@@ -2,23 +2,41 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // firebase
 import { auth } from "../firebase/Firebase"
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 
 export default function Login({ email, setEmail, password, setPassword }) {
 	const [showLoginError, isShowLoginError] = useState(false);
+	const [rememberMe, isRemembered] = useState(false);
 	const navigate = useNavigate();
 	const googleProvider = new GoogleAuthProvider();
 
-	const signIn = async () => {
-		try {
-			await signInWithEmailAndPassword(auth, email, password);
-			console.log("normal signin:", auth.currentUser.email);
-			navigate("/profile");
-		} catch (err) {
-			isShowLoginError(true);
-			console.error(err);
-		}
+	const signIn = () => {
+		console.log("remember?", rememberMe);
+		// if user chooses to be remembered
+		// if (rememberMe) {
+		// keep user logged in until explicit signOut is used to clear state
+		setPersistence(auth, browserLocalPersistence)
+			.then(() => {
+				return signInWithEmailAndPassword(auth, email, password);
+			})
+			.catch((error) => {
+				isShowLoginError(true);
+				console.error(error);
+			});
+		// } else {
+		// 	// signOut user when tab or window is closed
+		// 	setPersistence(auth, browserSessionPersistence)
+		// 		.then(() => {
+		// 			return signInWithEmailAndPassword(auth, email, password);
+		// 		})
+		// 		.catch((error) => {
+		// 			isShowLoginError(true);
+		// 			console.error(error);
+		// 		});
+		// }
+		console.log("normal signin:", auth.currentUser.email);
+		navigate("/profile");
 	};
 
 	// sign in with google
@@ -33,25 +51,13 @@ export default function Login({ email, setEmail, password, setPassword }) {
 		}
 	};
 
-	// const validateLogin = () => {
-	// 	// get login credentials
-	// 	const arrayIndex = loginCredentials.findIndex((obj) => email === obj.email);
-	// 	var isValidEmail = loginCredentials[arrayIndex].email === email;
-	// 	var isValidPassword = loginCredentials[arrayIndex].password === password;
-	// 	console.log(isValidEmail);
-	// 	console.log(isValidPassword);
-
-	// 	if (isValidEmail) {
-	// 		if (isValidPassword) {
-	// 			var username = loginCredentials[arrayIndex].username;
-	// 			setUsername(username);
-	// 			navigate("/");
-	// 		}
-	// 		isShowLoginError(true);
-	// 	} else {
-	// 		isShowLoginError(true);
-	// 	}
-	// };
+	const toggleAuthPersistence = () => {
+		if (rememberMe) {
+			isRemembered(false);
+		} else {
+			isRemembered(true);
+		}
+	};
 
 	return <>
 		{/* Template: https://mdbootstrap.com/docs/standard/extended/login/#section-8 */}
@@ -92,7 +98,7 @@ export default function Login({ email, setEmail, password, setPassword }) {
 
 								<div className="mb-4" style={{ fontSize: "18px" }}>
 									<span className="me-2" style={{ width: "50px" }} id="rememberMe">
-										<input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+										<input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onClick={toggleAuthPersistence} />
 									</span>Remember me
 								</div>
 

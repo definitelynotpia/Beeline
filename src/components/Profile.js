@@ -4,7 +4,6 @@ import { useEffect } from "react";
 // firebase
 import { db, auth } from "../firebase/Firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { async } from "@firebase/util";
 
 export default function Profile({ usersCollectionRef, userData, setUserData }) {
 
