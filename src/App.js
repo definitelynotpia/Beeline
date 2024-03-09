@@ -3,12 +3,16 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Dashboard from "./components/Dashboard";
+import Notes from "./sidebar/Notes";
+import Tags from "./sidebar/Tags";
+import Beehives from "./sidebar/Beehives";
 // react
 import "./App.css";
 import logo from "./logo.png";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route, NavLink } from "react-router-dom";
+// import { FontAwesomeIcon } from "@fontawesome/react-fontawesome";
 // firebase
 import { db, auth } from "./firebase/Firebase";
 import { collection, getDocs, query, where, onSnapshot } from "firebase/firestore";
@@ -49,7 +53,7 @@ function App() {
   return (
     <div className="App">
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg fixed-top bg-dark border-bottom border-body" data-bs-theme="dark">
+      <nav className="navbar navbar-expand-lg sticky-top bg-dark border-bottom border-body" data-bs-theme="dark">
         <div className="container-fluid">
 
           <img src={logo} alt="BEELINE logo" width="50" className="d-inline-block align-text-top app-icon" />
@@ -81,18 +85,74 @@ function App() {
         </div>
       </nav>
 
-      <header className="App-header">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
+      {/* sidebar */
+        user && <>
+          {/* sidebar */}
+          <div className="position-fixed p-3 text-white bg-dark" style={{ width: "250px", height: "100vh" }}>
+            <div className="dropdown">
+              <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
+                <strong>{userData.username}</strong>
+              </a>
+              <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                <li><a className="dropdown-item" href="#">Profile</a></li>
+                <li><a className="dropdown-item" href="#">Settings</a></li>
+                <li><hr className="dropdown-divider" /></li>
+                <li><a className="dropdown-item" href="#">Sign out</a></li>
+              </ul>
+            </div>
+            <hr />
+            <ul className="nav nav-pills flex-column mb-auto">
+              <li className="nav-item">
+                <a href="#" className="nav-link active" aria-current="page">
+                  {/* <FontAwesomeIcon icon="fa-solid fa-note-sticky" /> */}
+                  <NavLink className="nav-link" to="/">Notes</NavLink>
+                </a>
+              </li>
+              <li>
+                <a href="#" className="nav-link text-white">
+                  {/* <svg className="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg> */}
+                  <NavLink className="nav-link" to="/beehives">Beehives</NavLink>
+                </a>
+              </li>
+              <li>
+                <a href="#" className="nav-link text-white">
+                  {/* <svg className="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg> */}
+                  <NavLink className="nav-link" to="/tags">Tags</NavLink>
+                </a>
+              </li>
+            </ul>
+          </div>
 
-          <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
+          <header className="App-header" style={{ marginLeft: "250px" }}>
+            <Routes>
+              <Route path="/" element={<Notes />} />
 
-          <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
+              <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
 
-          <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} userData={userData} setUserData={setUserData} />} />
-        </Routes>
-      </header>
-    </div>
+              <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
+
+              <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} userData={userData} setUserData={setUserData} />} />
+            </Routes>
+          </header>
+        </>}
+
+
+      {/* router if user logged out */
+        !user && <>
+          <header className="App-header">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+
+              <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
+
+              <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
+
+              <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} userData={userData} setUserData={setUserData} />} />
+            </Routes>
+          </header>
+        </>}
+    </div >
   );
 }
 

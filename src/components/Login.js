@@ -12,7 +12,6 @@ export default function Login({ email, setEmail, password, setPassword }) {
 	const googleProvider = new GoogleAuthProvider();
 
 	const signIn = () => {
-		console.log("remember?", rememberMe);
 		// if user chooses to be remembered
 		// if (rememberMe) {
 		// keep user logged in until explicit signOut is used to clear state

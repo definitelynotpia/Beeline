@@ -7,10 +7,12 @@ import { doc, getDoc } from "firebase/firestore";
 
 export default function Profile({ usersCollectionRef, userData, setUserData }) {
 
+	const user = auth.currentUser;
+
 	useEffect(() => {
 		const fetchDocById = async () => {
 			// Create DocumentReference
-			const docRef = doc(db, "Users", auth.currentUser.uid) // db = getFirestore()
+			const docRef = doc(db, "Users", user.uid) // db = getFirestore()
 			// Fetch document
 			getDoc(docRef)
 				.then(docSnap => {
