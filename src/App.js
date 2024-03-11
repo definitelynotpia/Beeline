@@ -12,7 +12,6 @@ import logo from "./logo.png";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route, NavLink } from "react-router-dom";
-// import { FontAwesomeIcon } from "@fontawesome/react-fontawesome";
 // firebase
 import { db, auth } from "./firebase/Firebase";
 import { collection, getDocs, query, where, onSnapshot } from "firebase/firestore";
@@ -23,7 +22,7 @@ function App() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState([]);
+  const [uid, setUid] = useState("");
   const navigate = useNavigate();
   // if not logged in, userData will be null
   const user = auth.currentUser;
@@ -64,35 +63,29 @@ function App() {
           </button>
 
           <div className="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
-            {/* <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <NavLink className="nav-link active" to="/">Dashboard</NavLink>
-              </li>
-            </ul> */}
 
             { // if user is not logged in
-              !user && <><button className="btn btn-outline-warning ms-5 me-3" id="loginButton" type="button">
+              (!user && <><button className="btn btn-outline-warning ms-5 me-3" id="loginButton" type="button">
                 <NavLink className="nav-link" to="/login">Login</NavLink>
               </button>
                 <button className="btn btn-warning me-2" id="registerButton" type="button">
                   <NavLink className="nav-link" to="/register">Register</NavLink>
-                </button></>}
-
-            { // if user is logged in
-              user && <><button type="button" className="btn btn-outline-warning ms-5 me-3"><NavLink className="nav-link" to="/profile" ><i className="fa fa-user" style={{ fontSize: "21px" }}></i></NavLink></button>
-                <button className="btn btn-warning me-2" id="loginButton" type="button" onClick={logout}>Logout</button></>}
+                </button></>) || // if user is logged in
+              (<><button type="button" className="btn btn-outline-warning ms-5 me-3"><NavLink className="nav-link" to="/profile" ><i className="fa fa-user" style={{ fontSize: "21px" }}></i></NavLink></button>
+                <button className="btn btn-warning me-2" id="loginButton" type="button" onClick={logout}>Logout</button></>)}
           </div>
         </div>
       </nav>
 
       {/* sidebar */
-        user && <>
+        (user && <>
           {/* sidebar */}
           <div className="position-fixed p-3 text-white bg-dark" style={{ width: "250px", height: "100vh" }}>
+            {/* profile dropdown */}
             <div className="dropdown">
               <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
-                <strong>{userData.username}</strong>
+                <img src="https://cdn.vectorstock.com/i/preview-1x/15/32/colorful-profile-picture-placeholder-icon-vector-42411532.jpg" alt="" width="32" height="32" className="rounded-circle me-2" />
+                <strong>{auth.currentUser.displayName}</strong>
               </a>
               <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                 <li><a className="dropdown-item" href="#">Profile</a></li>
@@ -102,56 +95,44 @@ function App() {
               </ul>
             </div>
             <hr />
+            {/* nav */}
             <ul className="nav nav-pills flex-column mb-auto">
               <li className="nav-item">
-                <a href="#" className="nav-link active" aria-current="page">
-                  {/* <FontAwesomeIcon icon="fa-solid fa-note-sticky" /> */}
-                  <NavLink className="nav-link" to="/">Notes</NavLink>
-                </a>
+                <NavLink className={window.location.pathname == "/" ? "nav-link my-2 fw-bold bg-warning text-dark" : "nav-link  my-2 bg-dark text-warning"} to="/">Notes</NavLink>
               </li>
               <li>
-                <a href="#" className="nav-link text-white">
-                  {/* <svg className="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg> */}
-                  <NavLink className="nav-link" to="/beehives">Beehives</NavLink>
-                </a>
+                <NavLink className={window.location.pathname == "/beehives" ? "nav-link my-2 fw-bold bg-warning text-dark" : "nav-link  my-2 bg-dark text-warning"} to="/beehives">Beehives</NavLink>
               </li>
               <li>
-                <a href="#" className="nav-link text-white">
-                  {/* <svg className="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg> */}
-                  <NavLink className="nav-link" to="/tags">Tags</NavLink>
-                </a>
+                <NavLink className={window.location.pathname == "/tags" ? "nav-link my-2 fw-bold bg-warning text-dark" : "nav-link  my-2 bg-dark text-warning"} to="/tags">Tags</NavLink>
               </li>
             </ul>
           </div>
 
-          <header className="App-header" style={{ marginLeft: "250px" }}>
+          <header style={{ marginLeft: "250px" }}>
             <Routes>
               <Route path="/" element={<Notes />} />
 
-              <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
+              <Route path="/beehives" element={<Beehives />} />
 
-              <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
+              <Route path="/tags" element={<Tags />} />
 
-              <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} userData={userData} setUserData={setUserData} />} />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </header>
-        </>}
+        </>) ||
+        (<><header className="App-header">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
 
+            <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} setUid={setUid} />} />
 
-      {/* router if user logged out */
-        !user && <>
-          <header className="App-header">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
+            <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
 
-              <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
-
-              <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
-
-              <Route path="/profile" element={<Profile usersCollectionRef={usersCollectionRef} userData={userData} setUserData={setUserData} />} />
-            </Routes>
-          </header>
-        </>}
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </header></>)
+      }
     </div >
   );
 }

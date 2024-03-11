@@ -5,37 +5,22 @@ import { auth } from "../firebase/Firebase"
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 
-export default function Login({ email, setEmail, password, setPassword }) {
+export default function Login({ email, setEmail, password, setPassword, setUid }) {
 	const [showLoginError, isShowLoginError] = useState(false);
-	const [rememberMe, isRemembered] = useState(false);
 	const navigate = useNavigate();
 	const googleProvider = new GoogleAuthProvider();
 
-	const signIn = () => {
-		// if user chooses to be remembered
-		// if (rememberMe) {
-		// keep user logged in until explicit signOut is used to clear state
-		setPersistence(auth, browserLocalPersistence)
+	const signIn = async () => {
+		await setPersistence(auth, browserLocalPersistence)
 			.then(() => {
-				return signInWithEmailAndPassword(auth, email, password);
+				signInWithEmailAndPassword(auth, email, password);
+				setUid(auth.currentUser.uid);
+				navigate("/profile");
 			})
 			.catch((error) => {
 				isShowLoginError(true);
 				console.error(error);
 			});
-		// } else {
-		// 	// signOut user when tab or window is closed
-		// 	setPersistence(auth, browserSessionPersistence)
-		// 		.then(() => {
-		// 			return signInWithEmailAndPassword(auth, email, password);
-		// 		})
-		// 		.catch((error) => {
-		// 			isShowLoginError(true);
-		// 			console.error(error);
-		// 		});
-		// }
-		console.log("normal signin:", auth.currentUser.email);
-		navigate("/profile");
 	};
 
 	// sign in with google
@@ -44,17 +29,9 @@ export default function Login({ email, setEmail, password, setPassword }) {
 			await signInWithPopup(auth, googleProvider);
 			console.log("google signin:", auth?.currentUser?.email);
 			navigate("/");
-		} catch (err) {
-			showLoginError(true);
-			console.error(err)
-		}
-	};
-
-	const toggleAuthPersistence = () => {
-		if (rememberMe) {
-			isRemembered(false);
-		} else {
-			isRemembered(true);
+		} catch (error) {
+			isShowLoginError(true);
+			console.error(error)
 		}
 	};
 
@@ -95,11 +72,11 @@ export default function Login({ email, setEmail, password, setPassword }) {
 									<input type="password" className="form-control" placeholder="Password" id="password" htmlFor="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} style={{ fontSize: "20px" }} required />
 								</div>
 
-								<div className="mb-4" style={{ fontSize: "18px" }}>
+								{/* <div className="mb-4" style={{ fontSize: "18px" }}>
 									<span className="me-2" style={{ width: "50px" }} id="rememberMe">
 										<input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onClick={toggleAuthPersistence} />
 									</span>Remember me
-								</div>
+								</div> */}
 
 								<button type="button" className="btn btn-warning btn-block fw-bold" onClick={signIn}>
 									LOGIN

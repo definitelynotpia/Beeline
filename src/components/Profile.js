@@ -1,18 +1,17 @@
 import logo from "../logo.png";
 // react
-import { useEffect } from "react";
+import { useEffect, useState } from 'react';
 // firebase
 import { db, auth } from "../firebase/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export default function Profile({ usersCollectionRef, userData, setUserData }) {
-
-	const user = auth.currentUser;
+export default function Profile() {
+	const [userData, setUserData] = useState([]);
 
 	useEffect(() => {
 		const fetchDocById = async () => {
 			// Create DocumentReference
-			const docRef = doc(db, "Users", user.uid) // db = getFirestore()
+			const docRef = doc(db, "Users", auth.currentUser.uid) // db = getFirestore()
 			// Fetch document
 			getDoc(docRef)
 				.then(docSnap => {
@@ -24,9 +23,7 @@ export default function Profile({ usersCollectionRef, userData, setUserData }) {
 		fetchDocById();
 	}, [auth.currentUser.uid]);
 
-	console.log();
-
-	return <>
+	return <div className="App-header">
 
 		<div className="container py-5">
 			<div className="row">
@@ -138,59 +135,5 @@ export default function Profile({ usersCollectionRef, userData, setUserData }) {
 
 			</div >
 		</div >
-	</>;
-
-	// return <>
-	// 	{/* Template: 'https://mdbootstrap.com/docs/standard/extended/profiles/#section-5 */}
-	// 	<div className="container py-5 h-100">
-	// 		<div className="row d-flex justify-content-center align-items-center h-100">
-	// 			<div className="col col-lg-6 mb-4 mb-lg-0">
-	// 				<div className="card mb-3" style={{ borderRadius: '".5rem" }}>
-	// 					<div className="row g-0">
-	// 						<div className="col-md-4 bg-dark text-center text-white"
-	// 							>
-	// 							<img src={logo} alt="Avatar" className="img-fluid border border-warning my-5 px-2 py-2" width="80px" />
-	// 							<h5>{userData.username}</h5>
-	// 							<p>{userData.email}</p>
-	// 							<i className="fa fa-edit mb-5"></i>
-	// 						</div>
-	// 						<div className="col-md-8">
-	// 							<div className="card-body p-4">
-	// 								<h6>Information</h6>
-	// 								<hr className="mt-0 mb-4" />
-	// 								<div className="row pt-1">
-	// 									<div className="col-6 mb-3">
-	// 										<h6>Email</h6>
-	// 										<p className="text-muted">info@example.com</p>
-	// 									</div>
-	// 									<div className="col-6 mb-3">
-	// 										<h6>Phone</h6>
-	// 										<p className="text-muted">123 456 789</p>
-	// 									</div>
-	// 								</div>
-	// 								<h6>Projects</h6>
-	// 								<hr className="mt-0 mb-4" />
-	// 								<div className="row pt-1">
-	// 									<div className="col-6 mb-3">
-	// 										<h6>Recent</h6>
-	// 										<p className="text-muted">Lorem ipsum</p>
-	// 									</div>
-	// 									<div className="col-6 mb-3">
-	// 										<h6>Most Viewed</h6>
-	// 										<p className="text-muted">Dolor sit amet</p>
-	// 									</div>
-	// 								</div>
-	// 								<div className="d-flex justify-content-start">
-	// 									<a href="#!"><i className="fab fa-facebook-f fa-lg me-3"></i></a>
-	// 									<a href="#!"><i className="fab fa-twitter fa-lg me-3"></i></a>
-	// 									<a href="#!"><i className="fab fa-instagram fa-lg"></i></a>
-	// 								</div>
-	// 							</div>
-	// 						</div>
-	// 					</div>
-	// 				</div>
-	// 			</div>
-	// 		</div>
-	// 	</div>
-	// </>;
+	</div>;
 }
