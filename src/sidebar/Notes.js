@@ -2,86 +2,122 @@
 import { useEffect, useState } from 'react';
 // firebase
 import { db, auth } from "../firebase/Firebase";
-import { collection, doc, getDoc, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, getDocs, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 // wysiwyg editor
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// html parser
+import parse from 'html-react-parser';
 
 export default function Notes() {
     const uid = auth.currentUser.uid;
-
-    const [userData, setUserData] = useState([]);
     // notes data
+    const [notes, setNotes] = useState(null);
     const [title, setTitle] = useState("New note");
     const [content, setContent] = useState("");
-    const [timestamp, setTimestamp] = useState("");
-    const [collaborators, setCollaborators] = useState("");
     // check if user is editing notes
     const [editing, isEditing] = useState(false);
+    // store firestore path
+    const notesRef = collection(db, "Users", uid, "Notes");
+    // const userRef = doc(db, "Users", uid);
 
-    useEffect(() => {
-        const fetchDocById = async () => {
-            // Create DocumentReference
-            const docRef = doc(db, "Users", uid) // db = getFirestore()
-            // Fetch document
-            getDoc(docRef)
-                .then(docSnap => {
-                    if (docSnap.exists()) {
-                        setUserData(docSnap.data());
-                    }
-                });
-        };
-        fetchDocById();
-    }, [uid]);
-
+    // create new note
     const createNote = async () => {
-        const docRef = await addDoc(collection(db, "Notes"), {
+        await addDoc(collection(db, "Users", uid, "Notes"), {
             title: title,
             content: content,
             timestamp: serverTimestamp(),
-            ownerId: uid
+            ownerId: uid,
         });
-        console.log("New note ID: ", docRef.id);
+        isEditing(false);
+        setTitle("");
+        setContent("");
     };
 
-    return <>
-        <div className="notes-page">
-            {/* notes form */}
-            <div className="card my-4" style={{ width: "25vw", borderRadius: "15px" }}>
-                <form id="new-note">
-                    <div className="card-body p-3">
-                        {/* Title */}
-                        <input className="text-center fw-bold border-secondary-subtle border-top-0 border-start-0 border-end-0 mt-3 mb-4" style={{ width: "23.6vw", marginLeft: "auto", fontSize: "20px" }}
-                            name="title" id="email" value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
-                        {/* Content */}
-                        <CKEditor
-                            editor={ClassicEditor}
-                            data={"<p>Hey there, " + auth.currentUser.displayName + "! This is your notes.</p>"}
-                            onReady={editor => {
-                                // You can store the "editor" and use when it is needed.
-                                console.log('Editor is ready to use!', editor);
-                            }}
-                            onChange={(e, editor) => {
-                                isEditing(true);
-                                const data = editor.getData();
-                                setContent(data);
-                            }}
-                            onBlur={(e, editor) => {
-                                console.log('Blur.', isEditing, editor);
-                            }}
-                            onFocus={(e, editor) => {
-                                console.log('Focus.', isEditing, editor);
-                            }}
-                        />
-                        {/* Collaborators */}
-                        <div className="d-flex justify-content-end align-items-end mt-3 me-2">
-                            {(editing && <button type="submit" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }} onClick={createNote}>
-                                <i className="fa fa-check"></i>
-                            </button>)}
-                        </div>
+    // delete selected note
+    const handleDelete = async (id) => {
+        const noteRef = doc(db, "Users", uid, "Notes", id);
+        await deleteDoc(noteRef);
+    }
+
+    useEffect(() => {
+        getDocs(notesRef)
+            .then((snapshot) => {
+                let results = []
+                console.log(snapshot)
+                snapshot.docs.forEach(doc => {
+                    results.push({ id: doc.id, ...doc.data() });
+                });
+                setNotes(results);
+            })
+    }, [])
+
+    return <div className="notes-page">
+        {/* notes form */}
+        <div className="card my-5" style={{ width: "25vw", borderRadius: "15px" }}>
+            <form id="new-note">
+                <div className="card-body p-3">
+                    {/* Title */}
+                    <input className="text-center fw-bold border-secondary-subtle border-top-0 border-start-0 border-end-0 mt-3 mb-4" style={{ width: "23.6vw", marginLeft: "auto", fontSize: "20px" }}
+                        name="title" id="email" value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
+
+                    {/* Content */}
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={content}
+                        onReady={editor => {
+                            // You can store the "editor" and use when it is needed.
+                            console.log('Editor is ready to use!', editor);
+                        }}
+                        onChange={(e, editor) => {
+                            isEditing(true);
+                            const data = editor.getData();
+                            setContent(data);
+                        }}
+                    />
+
+                    {/* Collaborators */}
+                    <div className="d-flex justify-content-end align-items-end mt-3 me-2">
+                        {(editing && <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }} onClick={createNote}>
+                            <i className="fa fa-check"></i>
+                        </button>)}
                     </div>
-                </form>
+                </div>
+            </form>
+        </div>
+
+        <hr className="py-2" />
+
+        {/* notes list */}
+        {notes && notes.map(note =>
+            <div key={note.id} className="card my-2" style={{ borderRadius: "15px" }}>
+                <div className="card-body p-3">
+                    {/* Title, Author */}
+                    <div className="text-start mb-3"><span className="me-3 fw-bold" style={{ fontSize: "20px" }}>{note.title}</span><span className="fst-italic" style={{ fontSize: "16px" }}>Owned by <b>{auth.currentUser.displayName}</b></span></div>
+                    <hr className="my-3" />
+                    {/* HTML Content parsednpm i react-html-parser */}
+                    <div className="text-start" style={{ fontSize: "18px" }}>{parse(note.content)}</div>
+                    <hr className="my-3" />
+                    {/* Collaborators */}
+                    <div className="d-flex justify-content-end align-items-end me-2">
+                        <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }} onClick={() => handleDelete(note.id)} >
+                            <i className="fa fa-trash"></i>
+                        </button>
+                        {/* <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
+                            <i className="fa fa-user-plus"></i>
+                        </button>
+                        <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
+                            <i className="fa fa-share"></i>
+                        </button> */}
+                        <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
+                            <i className="fa fa-pencil"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div >
-    </>;
+        )}
+
+        {!notes && <div>no notes</div>}
+
+    </div >;
 }

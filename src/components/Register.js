@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // firebase
 import { auth, db } from "../firebase/Firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, doc, addDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Register({ email, setEmail, username, setUsername, password, setPassword, usersCollectionRef }) {
 
@@ -27,6 +27,13 @@ export default function Register({ email, setEmail, username, setUsername, passw
 				email: email,
 				gender: "",
 				username: username,
+			});
+			// set introductory note
+			await addDoc(collection(db, "Users", auth.currentUser.uid, "Notes"), {
+				title: process.env.REACT_APP_NOTE_TITLE,
+				content: process.env.REACT_APP_NOTE_CONTENT,
+				timestamp: serverTimestamp(),
+				ownerId: auth.currentUser.uid,
 			});
 			console.log("register:", auth?.currentUser?.email);
 			navigate("/");
