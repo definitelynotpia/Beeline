@@ -34,6 +34,7 @@ export default function Register({ email, setEmail, username, setUsername, passw
 				content: process.env.REACT_APP_NOTE_CONTENT,
 				timestamp: serverTimestamp(),
 				owner: process.env.REACT_APP_NOTE_OWNER,
+				isPinned: true,
 			});
 			navigate("/login");
 		} catch (err) {

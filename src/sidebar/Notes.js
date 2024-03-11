@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 // firebase
 import { db, auth } from "../firebase/Firebase";
-import { collection, doc, getDoc, getDocs, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, addDoc, serverTimestamp, deleteDoc, updateDoc } from "firebase/firestore";
 // wysiwyg editor
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -28,6 +28,7 @@ export default function Notes() {
             content: content,
             timestamp: serverTimestamp(),
             owner: auth.currentUser.displayName,
+            isPinned: false,
         });
         isEditing(false);
         setTitle("");
@@ -38,6 +39,17 @@ export default function Notes() {
     const handleDelete = async (id) => {
         const noteRef = doc(db, "Users", uid, "Notes", id);
         await deleteDoc(noteRef);
+    };
+
+    const setPin = async (id, isPinned) => {
+        const noteRef = doc(db, "Users", uid, "Notes", id);
+        await updateDoc(noteRef, {
+            isPinned: !isPinned,
+        }).then(response => {
+            alert("updated")
+        }).catch(error => {
+            console.log(error.message)
+        })
     };
 
     useEffect(() => {
@@ -92,8 +104,12 @@ export default function Notes() {
                 <div key={note.id} className="card my-2 mx-2" style={{ width: "500px", borderRadius: "15px" }}>
                     <div className="card-body p-3">
                         {/* Title, Author */}
-                        <div className="text-start mb-3"><span className="me-3 fw-bold" style={{ fontSize: "20px" }}>{note.title}</span><span className="fst-italic" style={{ fontSize: "16px" }}>Owned by <b>{note.owner}</b></span></div>
-                        <hr className="my-3" />
+                        <div className="text-start">
+                            <i type="button" className={(note.isPinned && "star fa fa-star me-2 text-warning") || ("star fa fa-star me-2 text-secondary")} style={{ fontSize: "20px" }}></i>
+                            <span className="me-3 fw-bold" style={{ fontSize: "20px" }}>{note.title}</span>
+                        </div>
+                        <div className="text-start fst-italic" style={{ fontSize: "16px" }}>Owned by <b>{note.owner}</b></div>
+                        <hr className="my-4" />
                         {/* HTML Content parsednpm i react-html-parser */}
                         <div className="text-start" style={{ fontSize: "18px" }}>{parse(note.content)}</div>
                         <hr className="my-3" />
