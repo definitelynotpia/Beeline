@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 // firebase
 import { db, auth } from "../firebase/Firebase";
-import { collection, doc, getDocs, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 // wysiwyg editor
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -13,7 +13,7 @@ export default function Notes() {
     const uid = auth.currentUser.uid;
     // notes data
     const [notes, setNotes] = useState(null);
-    const [title, setTitle] = useState("New note");
+    const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     // check if user is editing notes
     const [editing, isEditing] = useState(false);
@@ -27,7 +27,7 @@ export default function Notes() {
             title: title,
             content: content,
             timestamp: serverTimestamp(),
-            ownerId: uid,
+            owner: auth.currentUser.displayName,
         });
         isEditing(false);
         setTitle("");
@@ -38,7 +38,7 @@ export default function Notes() {
     const handleDelete = async (id) => {
         const noteRef = doc(db, "Users", uid, "Notes", id);
         await deleteDoc(noteRef);
-    }
+    };
 
     useEffect(() => {
         getDocs(notesRef)
@@ -86,38 +86,30 @@ export default function Notes() {
             </form>
         </div>
 
-        <hr className="py-2" />
-
         {/* notes list */}
-        {notes && notes.map(note =>
-            <div key={note.id} className="card my-2" style={{ borderRadius: "15px" }}>
-                <div className="card-body p-3">
-                    {/* Title, Author */}
-                    <div className="text-start mb-3"><span className="me-3 fw-bold" style={{ fontSize: "20px" }}>{note.title}</span><span className="fst-italic" style={{ fontSize: "16px" }}>Owned by <b>{auth.currentUser.displayName}</b></span></div>
-                    <hr className="my-3" />
-                    {/* HTML Content parsednpm i react-html-parser */}
-                    <div className="text-start" style={{ fontSize: "18px" }}>{parse(note.content)}</div>
-                    <hr className="my-3" />
-                    {/* Collaborators */}
-                    <div className="d-flex justify-content-end align-items-end me-2">
-                        <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }} onClick={() => handleDelete(note.id)} >
-                            <i className="fa fa-trash"></i>
-                        </button>
-                        {/* <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-                            <i className="fa fa-user-plus"></i>
-                        </button>
-                        <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-                            <i className="fa fa-share"></i>
-                        </button> */}
-                        <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
-                            <i className="fa fa-pencil"></i>
-                        </button>
+        <div className="d-flex flex-wrap justify-content-center">
+            {notes && notes.map(note =>
+                <div key={note.id} className="card my-2 mx-2" style={{ width: "500px", borderRadius: "15px" }}>
+                    <div className="card-body p-3">
+                        {/* Title, Author */}
+                        <div className="text-start mb-3"><span className="me-3 fw-bold" style={{ fontSize: "20px" }}>{note.title}</span><span className="fst-italic" style={{ fontSize: "16px" }}>Owned by <b>{note.owner}</b></span></div>
+                        <hr className="my-3" />
+                        {/* HTML Content parsednpm i react-html-parser */}
+                        <div className="text-start" style={{ fontSize: "18px" }}>{parse(note.content)}</div>
+                        <hr className="my-3" />
+                        {/* Collaborators */}
+                        <div className="d-flex justify-content-end align-items-end me-2">
+                            <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }} onClick={() => handleDelete(note.id)} >
+                                <i className="fa fa-trash"></i>
+                            </button>
+                            <button type="button" className="btn btn-outline-dark btn-warning me-2" style={{ fontSize: "18px" }}>
+                                <i className="fa fa-pencil"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )}
-
-        {!notes && <div>no notes</div>}
+            )}
+        </div>
 
     </div >;
 }

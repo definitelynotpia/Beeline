@@ -16,6 +16,7 @@ export default function Profile() {
 			getDoc(docRef)
 				.then(docSnap => {
 					if (docSnap.exists()) {
+						console.log(docSnap.data().username);
 						setUserData(docSnap.data());
 					}
 				});

@@ -33,10 +33,9 @@ export default function Register({ email, setEmail, username, setUsername, passw
 				title: process.env.REACT_APP_NOTE_TITLE,
 				content: process.env.REACT_APP_NOTE_CONTENT,
 				timestamp: serverTimestamp(),
-				ownerId: auth.currentUser.uid,
+				owner: process.env.REACT_APP_NOTE_OWNER,
 			});
-			console.log("register:", auth?.currentUser?.email);
-			navigate("/");
+			navigate("/login");
 		} catch (err) {
 			isUserExists(true);
 			isShowRegisterError(true);
@@ -108,7 +107,7 @@ export default function Register({ email, setEmail, username, setUsername, passw
 
 								{/* Password mismatch */
 									(password != "" && password != confirmPassword) && <>
-										<div className="alert alert-warning align-items-center mb-4">Passwords do not match.</div>
+										<div className="mb-4 fw-bold text-left text-danger" style={{ fontSize: "16px" }}><i className="fa fa-solid fa-xmark" style={{ marginLeft: "1px", marginRight: "6px" }}></i>Passwords do not match.</div>
 										<button type="button" className="btn btn-warning btn-block mb-4" onClick={createUser} disabled>
 											REGISTER
 										</button>
