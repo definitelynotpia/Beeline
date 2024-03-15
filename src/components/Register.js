@@ -4,43 +4,52 @@ import { useNavigate } from "react-router-dom";
 // firebase
 import { auth, db } from "../firebase/Firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { collection, doc, addDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, addDoc, setDoc } from "firebase/firestore";
 
 export default function Register({ email, setEmail, username, setUsername, password, setPassword, usersCollectionRef }) {
 
 	const [confirmPassword, setConfirmPassword] = useState("");
-	const [userExists, isUserExists] = useState(false);
+	// const [userExists, isUserExists] = useState(false);
 	const [showRegisterError, isShowRegisterError] = useState(false);
 	const navigate = useNavigate();
 
 	const createUser = async () => {
-		try {
-			// create new Firebase User (displayName/username, email, password)
-			await createUserWithEmailAndPassword(auth, email, password);
-			updateProfile(auth.currentUser, {
-				displayName: username,
-				photoURL: "https://example.com/jane-q-user/profile.jpg"
+		// create new Firebase User (displayName/username, email, password)
+		await createUserWithEmailAndPassword(auth, email, password)
+			.then(() => {
+				console.log("created user");
+				// Signed up
+				updateProfile(auth.currentUser, {
+					displayName: username,
+					photoURL: "https://cdn.vectorstock.com/i/preview-1x/15/32/colorful-profile-picture-placeholder-icon-vector-42411532.jpg"
+				})
+
+				console.log("username and profile picture");
+				// store user in Firestore db
+				setDoc(doc(usersCollectionRef, auth.currentUser.uid), {
+					bio: "",
+					email: email,
+					gender: "",
+					username: username,
+				});
+
+				console.log("user stored");
 			})
-			// store user in Firestore db
-			await setDoc(doc(usersCollectionRef, auth.currentUser.uid), {
-				bio: "",
-				email: email,
-				gender: "",
-				username: username,
+			.catch((err) => {
+				isShowRegisterError(true);
 			});
-			// set introductory note
-			await addDoc(collection(db, "Users", auth.currentUser.uid, "Notes"), {
-				title: process.env.REACT_APP_NOTE_TITLE,
-				content: process.env.REACT_APP_NOTE_CONTENT,
-				timestamp: serverTimestamp(),
-				owner: process.env.REACT_APP_NOTE_OWNER,
-				isPinned: true,
-			});
-			navigate("/login");
-		} catch (err) {
-			isUserExists(true);
-			isShowRegisterError(true);
-		}
+		// set introductory note
+		const today = new Date();
+		const hour = ((today.getHours() > 12) ? (today.getHours() - 12) : (today.getHours()));
+		const timestamp = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear() + " " + hour + ":" + today.getMinutes() + ((today.getHours() > 12) ? " PM" : " AM");
+		addDoc(collection(db, "Users", auth.currentUser.uid, "Notes"), {
+			title: "Welcome to BEELINE",
+			content: "<h4>Hey there, <strong>busy bee</strong>!</h4><p>This is where your <i><strong>notes</strong></i> live. Write in the text editor above to create your first note! For feedback or support, email <a href='mailto:beeline.support@ciit.edu.ph'>beeline.support@ciit.edu.ph</a> and we will get back to you as soon as we can.</p><p>From, <strong>The BEELINE Team</strong></p>",
+			timestamp: timestamp,
+			owner: "The BEELINE Team",
+			isPinned: true,
+		});
+		navigate("/");
 	};
 
 	return <>
@@ -67,10 +76,10 @@ export default function Register({ email, setEmail, username, setUsername, passw
 						<div className="card-body pb-5 px-md-5">
 							<h4 className="pt-3 pb-4 ls-tight fw-bold text-warning">Register your account.</h4>
 
-							{showRegisterError && <>
+							{/* {showRegisterError && <>
 								{(email == "" || password == "" || username == "" || confirmPassword == "") && <div className="alert alert-warning align-items-center" style={{ fontSize: "15px" }}><div className="fw-bold" style={{ fontSize: "16px" }}>Missing fields.</div>One or more required fields are empty. Please check your input.</div>}
 								{userExists && <div className="alert alert-warning align-items-center" style={{ fontSize: "15px" }}><div className="fw-bold" style={{ fontSize: "16px" }}>Email already in use.</div>Please use a unique email when registering.</div>}
-							</>}
+							</>} */}
 
 							<form>
 								<div className="input-group">

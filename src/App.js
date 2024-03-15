@@ -79,21 +79,21 @@ function App() {
       {/* sidebar */
         (user && <>
           {/* sidebar */}
-          <div className="position-fixed p-3 text-white bg-dark" style={{ width: "250px", height: "100vh" }}>
+          <div className="d-flex flex-column align-items-center position-fixed p-3 text-white bg-dark" style={{ width: "250px", height: "100vh" }}>
             {/* profile dropdown */}
-            <div className="dropdown">
-              <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://cdn.vectorstock.com/i/preview-1x/15/32/colorful-profile-picture-placeholder-icon-vector-42411532.jpg" alt="" width="32" height="32" className="rounded-circle me-2" />
-                <strong>{auth.currentUser.displayName}</strong>
+            <div className="dropdown my-3">
+              <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle mx-2" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src={auth.currentUser.photoURL} alt="" width="32" height="32" className="rounded-circle me-2" />
+                {auth.currentUser.displayName}
               </a>
               <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                <li><a className="dropdown-item" href="#">Profile</a></li>
+                <NavLink className="dropdown-item" to="/profile" >Profile</NavLink>
                 <li><a className="dropdown-item" href="#">Settings</a></li>
                 <li><hr className="dropdown-divider" /></li>
                 <li><a className="dropdown-item" href="#">Sign out</a></li>
               </ul>
             </div>
-            <hr />
+
             {/* nav */}
             <ul className="nav nav-pills flex-column mb-auto">
               <li className="nav-item">

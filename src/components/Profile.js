@@ -36,7 +36,7 @@ export default function Profile() {
 				<div className="col col-lg-5 h-100">
 					<div className="card border border-1 border-warning bg-dark text-white">
 						<div className="justify-content-center align-items-center mt-5">
-							<img src={logo} alt="Avatar" className="img-fluid img-thumbnail mb-3" width='150px' />
+							<img src={auth.currentUser.photoURL} alt="Avatar" className="img-fluid img-thumbnail mb-3" width='150px' />
 							<div className="text-white">
 								<h3 className="text-warning fw-bold">{userData.username}</h3>
 								<h5 className="text-light fw-normal opacity-75"><i>{userData.email}</i></h5>
