@@ -22,7 +22,6 @@ function App() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [uid, setUid] = useState("");
   const navigate = useNavigate();
   // if not logged in, userData will be null
   const user = auth.currentUser;
@@ -125,11 +124,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
 
-            <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} setUid={setUid} />} />
+            <Route path="/login" element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} />} />
 
             <Route path="/register" element={<Register email={email} setEmail={setEmail} username={username} setUsername={setUsername} password={password} setPassword={setPassword} usersCollectionRef={usersCollectionRef} />} />
-
-            <Route path="/profile" element={<Profile />} />
           </Routes>
         </header></>)
       }

@@ -1,8 +1,9 @@
 // react
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 // firebase
 import { db, auth } from "../firebase/Firebase";
-import { collection, doc, getDoc, getDocs, addDoc, serverTimestamp, deleteDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, addDoc, serverTimestamp, deleteDoc, updateDoc, query, where, onSnapshot } from "firebase/firestore";
 // wysiwyg editor
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -19,7 +20,7 @@ export default function Notes() {
     const [editing, isEditing] = useState(false);
     // store firestore path
     const notesRef = collection(db, "Users", uid, "Notes");
-    // const userRef = doc(db, "Users", uid);
+    const navigate = useNavigate();
 
     // create new note
     const createNote = async () => {
@@ -53,16 +54,45 @@ export default function Notes() {
     };
 
     useEffect(() => {
-        getDocs(notesRef)
-            .then((snapshot) => {
-                let results = []
-                console.log(snapshot)
-                snapshot.docs.forEach(doc => {
-                    results.push({ id: doc.id, ...doc.data() });
-                });
-                setNotes(results);
-            })
+        const getNotes = () => {
+            getDocs(notesRef)
+                .then((snapshot) => {
+                    let results = []
+                    console.log(snapshot)
+                    snapshot.docs.forEach(doc => {
+                        results.push({ id: doc.id, ...doc.data() });
+                    });
+                    setNotes(results);
+                })
+        };
+
+        onSnapshot(query(notesRef), (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    console.log("New city: ", change.doc.data());
+                    getNotes();
+                }
+                if (change.type === "modified") {
+                    console.log("Modified city: ", change.doc.data());
+                    getNotes();
+                }
+                if (change.type === "removed") {
+                    console.log("Removed city: ", change.doc.data());
+                    getNotes();
+                }
+            });
+        });
     }, [])
+
+    // const q = query(notesRef/*, where("state", "==", "CA")*/);
+    // const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //     const notes = [];
+    //     querySnapshot.forEach((doc) => {
+    //         notes.push(doc.data().name);
+    //     });
+    //     console.log("user notes: ", notes.join(", "));
+    // });
+    // unsubscribe();
 
     return <div className="notes-page">
         {/* notes form */}

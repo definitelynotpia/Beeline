@@ -7,11 +7,14 @@ import { doc, getDoc } from "firebase/firestore";
 
 export default function Profile() {
 	const [userData, setUserData] = useState([]);
+	const uid = auth.currentUser.uid;
+
+	console.log(uid);
 
 	useEffect(() => {
 		const fetchDocById = async () => {
 			// Create DocumentReference
-			const docRef = doc(db, "Users", auth.currentUser.uid) // db = getFirestore()
+			const docRef = doc(db, "Users", uid) // db = getFirestore()
 			// Fetch document
 			getDoc(docRef)
 				.then(docSnap => {
@@ -22,7 +25,7 @@ export default function Profile() {
 				});
 		};
 		fetchDocById();
-	}, [auth.currentUser.uid]);
+	}, [uid]);
 
 	return <div className="App-header">
 

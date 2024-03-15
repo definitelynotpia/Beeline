@@ -5,16 +5,15 @@ import { auth } from "../firebase/Firebase"
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 
-export default function Login({ email, setEmail, password, setPassword, setUid }) {
+export default function Login({ email, setEmail, password, setPassword }) {
 	const [showLoginError, isShowLoginError] = useState(false);
 	const navigate = useNavigate();
 	const googleProvider = new GoogleAuthProvider();
 
 	const signIn = async () => {
+		await signInWithEmailAndPassword(auth, email, password);
 		await setPersistence(auth, browserLocalPersistence)
 			.then(() => {
-				signInWithEmailAndPassword(auth, email, password);
-				setUid(auth.currentUser.uid);
 				navigate("/profile");
 			})
 			.catch((error) => {
